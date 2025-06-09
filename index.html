@@ -1,16 +1,113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <!-- Previous head content and styles remain the same -->
 
-<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+ 
+    <style>
+        body {
+            font-family: Arial,;
+            background-color:  lightgray;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1, h2, h3 {
+            color: #333;
+        }
+        
+        .recipe-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #camera {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+        
+        video {
+            width: 100%;
+            height: auto;
+            border: 2px solid #ccc;
+        }
+        
+        .ingredients-list, .recipe-text {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        li {
+            padding: 5px 0;
+        }
+    </style>
+ 
 
-<h1>Rezeepte Scan Webseite</h1>
+ 
+    <h1>Rezepte Scanner</h1>
+    
+    <div class="recipe-container">
+        <div id="camera">
+            <video id="preview"></video>
+        </div>
+        
+        <div class="ingredients-list">
+            <h3>Zutaten</h3>
+            <ul id="ingredientsList"></ul>
+        </div>
 
-<input type="file" accept="image/*" capture="environment" id="imageInput">
-<div id="imagePreviewContainer">
-  <img id="imagePreview" src="" alt="Rezeptbild">
-</div>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+        <div class="recipe-text"></div>
+            <h3>Rezepttext</h3>
+            <div id="recipeText"></div>
+        </div>
 
-<textarea id="erkannterText" rows="10" placeholder="Hier erscheinen die Zutaten..."></textarea>
-<button onclick="erkenneText()">🧠 Texterkennung starten</button>
+        <div class="saved-recipes">
+            <h2>Gespeicherte Rezepte</h2>
+            <div id="savedRecipes"></div>
+        </div>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <script>
+        // Kamera initialisieren
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.querySelector("#preview")
+            },
+            decoder: {
+                readers: ["ean_reader", "ean_8_reader"]
+            }
+        }, function(err) {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            console.log("QuaggaJS has started");
+            Quagga.start();
+        });
 
-<button onclick="speichereRezept()">💾 Rezept speichern</button>
+        // Barcode erkannt
+        Quagga.onDetected(function(result) {
+            var code = result.codeResult.code;
+            console.log("Barcode detected and processed : [" + code + "]");
+            // Hier können Sie den Code verwenden, um Rezeptinformationen abzurufen
+        });
+    </script>
+</body>
+</html>
